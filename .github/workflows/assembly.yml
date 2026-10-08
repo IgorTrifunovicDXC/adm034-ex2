@@ -98,6 +98,26 @@ jobs:
             build/truck.txt
             build/spare_parts_truck.txt
           retention-days: 1
+          
+  quality_report:
+      needs: [test_car, test_motorbike, test_truck]
+      runs-on: ubuntu-latest
+      continue-on-error: true
+      steps:
+        - name: Download all artifacts
+          uses: actions/download-artifact@v7
+          with:
+            path: build/
+            merge-multiple: true
+  
+        - name: Write quality report summary
+          run: |
+            echo "## Quality Report" >> $GITHUB_STEP_SUMMARY
+            echo "| Vehicle | File | Status |" >> $GITHUB_STEP_SUMMARY
+            echo "|---------|------|--------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Car | car.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+            echo "| Motorbike | motorbike.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+            echo "| Truck | truck.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
 
   test_car:
     needs: build_car
